@@ -30,215 +30,195 @@ click on image for the interactive version
 
 ### SQL 
 
-**1. Identify peak purchasing days to plan marketing efforts:**
+** What is the average age of patients for each test result category?**
 
 ````sql
 SELECT
-	TO_CHAR(date, 'day') AS day_of_week,
-	COUNT(*) AS num_purchase
+	test_results,
+	ROUND(AVG(age),2)
 FROM
-	coffee_sales.sales
+	healthcare.dataset
 GROUP BY
-	day_of_week
-ORDER BY 
-	num_purchase desc
-LIMIT 3
+	test_results;
 
 ````
 
 #### Answer:
-| day_of_week | num_purchase |
+| test_results | avg |
 | ----------- | ----------- |
-| tuesday           | 432          |
-| monday           | 383          |
-| thursday           | 374          |
+| Abnormal           | 51.63          |
+| Inconclusive           | 51.68          |
+| Normal           | 51.32          |
 
 ***
 
-**2. What is the most popular coffee?**
+**Are there significant gender-based differences in test outcomes?**
 
 ````sql
 SELECT
-	coffee_name,
-	COUNT(*)
+	test_results,
+	gender,
+	ROUND(AVG(age),2)
 FROM
-	coffee_sales.sales
-GROUP BY 
-	coffee_name
+	healthcare.dataset
+GROUP BY
+	test_results,
+	gender
 ORDER BY
-	COUNT(*) DESC
-LIMIT 1
+	test_results;
 
 ````
 
 #### Answer:
-| coffee_name | count |
-| ----------- | ----------- |
-| Americano with Milk           | 621           |
+| coffee_name | count | count |
+| ----------- | ----------- | ----------- |
+| Abnormal | Male           | 51.61 | 
+| Abnormal | Female           | 51.64 | 
+| Inconclusive | Male           | 51.78 | 
+| Inconclusive | Female           | 51.58 | 
+| Normal | Male           | 51.32 | 
+| Normal | Female           | 51.31 | 
 
 ***
 
-**3. Analyze total sales trend over time**
+**Which age group has the highest rate of abnormal test results?**
+
+````sql
+SELECT
+	test_results,
+	COUNT(CASE 
+	         WHEN age < 18 THEN 1
+              END) AS children,
+	COUNT(CASE
+		WHEN age BETWEEN 19 AND 34 THEN 1
+	      END) AS young_adult,
+	COUNT(CASE
+		WHEN age BETWEEN 35 AND 64 THEN 1
+	      END) AS older_adult,
+	COUNT(CASE 
+		WHEN age > 65 THEN 1
+	      END) AS senior
+
+FROM
+	healthcare.dataset
+GROUP BY
+	test_results
+ORDER BY
+	test_results;
+
+````
+
+#### Answer:
+| test_results | children  | young_adult  | older_adult  | senior  |    
+| ----------- | ----------- | 
+| Abnormal           | 47  | 4240  | 8373  | 5457 |        
+| Inconclusive           | 33  | 4193 | 8223  | 5379 |         
+| Normal           | 36 | 4400 | 8096  | 5414 |        	   
+
+***
+
+**Which medical conditions are most commonly associated with abnormal test results?**
 
 ````sql
 SELECT 
-	EXTRACT(MONTH FROM date) AS num_month,
-	SUM(money) AS total_sales_in_Ukrainian_hryvnias
+	medical_condition,
+	COUNT(*)
 FROM 
-	coffee_sales.sales
-GROUP BY 
-	num_month
+	healthcare.dataset
+GROUP BY
+	medical_condition
 ORDER BY 
-	num_month
+	COUNT(*) DESC
 ````
 
 #### Answer:
-| num_month | total_sales_in_Ukrainian_hryvnias  |  
-| ----------- | ----------- | 
-| 3           | 7050.20  |        
-| 4           | 6720.56  |         
-| 5           | 9063.42  |         
-| 6	      | 7758.76  | 	   
-| 7	      | 6915.91  | 	   
-| 8           | 7613.84  |        
-| 9           | 9988.64  |         
-| 10           | 13891.16  |         
-| 11	      | 8590.54  | 	   
-| 12	      | 6053.04 | 
+| medical_condition | count  |
+| ----------- | ------------- |
+| Arthritis           | 9308  	      | 
+| Diabetes           | 9304         |
+| Hypertension           | 9245         |
+| Obesity	      | 9231         |
+| Cancer	      | 9227         |
+| Asthma	      | 9185         | 
 
 ***
 
-**4. Determine cash vs. card preference by date**
+**Are there specific medical conditions that result in longer hospital stays on average?**
 
 ````sql
-SELECT
-	EXTRACT(MONTH FROM date) AS num_month,
-	COUNT(CASE
-		WHEN cash_type = 'card' THEN 1
-	      END)AS num_card,
-	COUNT(CASE
-		WHEN cash_type = 'cash' THEN 1
-	      END) AS num_cash
+SELECT 
+	medical_condition,
+	AVG(discharge_date - date_of_admission) AS hospital_stay
 FROM
-	coffee_sales.sales
+	healthcare.dataset
 GROUP BY
-	num_month
+	medical_condition
 ORDER BY
-	num_month
+	hospital_stay DESC
 ````
 
 #### Answer:
-| num_month | num_card  | num_cash | 
-| ----------- | ------------- | ------------ |
-| 3           | 175  	      | 31            |
-| 4           | 168         | 28            |
-| 5           | 241         | 26            |
-| 6	      | 223         | 4	     |
-| 7	      | 237         | 0	     |
-| 8	      | 272         | 0	     |
-| 9	      | 344         | 0	     |
-| 10	      | 426         | 0	     |
-| 11	      | 259         | 0	     |
-| 12	      | 189         | 0	     |
-
-***
-
-**5. What are the top 7 customer's card number and what are their total sales?**
-
-````sql
-SELECT
-	card,
-	SUM(money) AS total_sales_in_Ukrainian_hryvnias
-FROM 
-	coffee_sales.sales
-WHERE
-	card IS NOT NULL
-GROUP BY
-	card
-ORDER BY 
-	total_sales_in_Ukrainian_hryvnias DESC
-LIMIT 7
-````
-
-#### Answer:
-| card | total_sales_in_Ukrainian_hryvnias  |  
+| medical_condition | hospital_stay  |  
 | ----------- | ------------- |  
-| ANON-0000-0000-0012           | 3584.60  	      |
-| ANON-0000-0000-0009           | 2343.98         |
-| ANON-0000-0000-0141           | 2314.82         |
-| ANON-0000-0000-0276	      | 1810.94         |
-| ANON-0000-0000-0040	      | 1519.48         |
-| ANON-0000-0000-0097	      | 1406.34         |
-| ANON-0000-0000-00507	      | 1368.18         | 
+| Asthema           | 15.70  	      |
+| Arthritis          | 15.52         |
+| Cancer           | 15.50         |
+| Hypertension	      | 15.46         |
+| Obesity	      | 15.46        |
+| Diabetes	      | 15.42         |
 
 ***
 
-**6. Find correlations between coffee type and payment method:**
+**Does blood type have any significant relationship with the frequency of abnormal or inconclusive test results?**
 
 ````sql
-SELECT
-	coffee_name,
-	COUNT(CASE
-		WHEN cash_type = 'cash' THEN 1
-	      END) AS cash_count,
-	COUNT(CASE
-		WHEN cash_type = 'card' THEN 1
-              END) AS card_count
+SELECT 
+	test_results,
+	blood_type,
+	COUNT(*)
 FROM
-	coffee_sales.sales
+	healthcare.dataset
 GROUP BY
-	coffee_name
+	test_results,
+	blood_type
 ORDER BY
-	coffee_name
+	COUNT(*) DESC
 ````
 
 #### Answer:
-| coffee_name | cash_count  | card_count | 
+| test_results | blood_type  | count | 
 | ----------- | ----------- | ------------ |
-| Americano           | 14  | 313        |
-| Americano with Milk           | 15 | 606        |
-| Cappuccino	      | 15 | 353	   |
-| Cocoa	      | 4 | 135	   |
-| Cortado	      | 5  | 242	   |
-| Espresso	      | 5  | 92	   |
-| Hot Chocolate	      | 6  | 200	   |
-| Lattee	      | 25  | 593	   |
+| Inconclusive           | B+  | 2366        |
+| Normal           | AB- | 2362        |
+| Abnormal	      | B- | 2348	   |
+| Abnormal	      | O+ | 2347	   |
+| Abnormal	      | A-  | 2336	   |
+
+PS. The answer above shows 5 out of 24 rows
 
 ***
 
-**7. Identify times of day with the highest sales volume: **
+**Which day of the week has the highest number of discharges? **
 
 ````sql
 SELECT
-	EXTRACT(HOUR FROM datetime) AS purchase_hour,
-	COUNT(*) AS num_purchase
+	discharge_date,
+	COUNT(*) as num_discharge
 FROM
-	coffee_sales.sales
+	healthcare.dataset
 GROUP BY
-	purchase_hour
-ORDER BY 
-	purchase_hour
+	discharge_date
+ORDER BY
+	COUNT(*) DESC
 ````
 
 #### Answer:
-| purchase_hour | num_purchase |  
+| discharge_date | num_dischrage |  
 | ----------- | ----------- | 
-| 7           | 65         | 
-| 8           | 174         |
-| 9           | 169         | 
-| 10           | 261         | 
-| 11           | 227         |
-| 12           | 191         | 
-| 13           | 163         | 
-| 14           | 153         |
-| 15           | 146         | 
-| 16           | 181         | 
-| 17           | 147         |
-| 18           | 157         | 
-| 19           | 173         | 
-| 20           | 139         |
-| 21          | 178         | 
-| 22           | 99         | 
+| 2020-03-15           | 53         | 
+| 2021-12-13           | 51         |
+| 2023-04-29           | 51         | 
+
 
 ***
 
