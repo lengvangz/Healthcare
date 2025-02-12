@@ -110,7 +110,7 @@ ORDER BY
 
 #### Answer:
 | test_results | children  | young_adult  | older_adult  | senior  |    
-| ----------- | ----------- | 
+| ----------- | ----------- |  ----------- |  ----------- |  ----------- | 
 | Abnormal           | 47  | 4240  | 8373  | 5457 |        
 | Inconclusive           | 33  | 4193 | 8223  | 5379 |         
 | Normal           | 36 | 4400 | 8096  | 5414 |        	   
