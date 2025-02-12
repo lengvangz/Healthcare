@@ -11,22 +11,22 @@
 ***
 
 ## Situation 
-Yaroslav got married recently. A year into their marriage, his wife shared the exciting news that she was pregnant. Motivated by this, Yaroslav decided to invest in a coffee vending machine as a source of income. He also began collecting data to help maximize his earnings.
+This synthetic healthcare dataset has been created to serve as a valuable resource for data science, machine learning, and data analysis enthusiasts. It is designed to mimic real-world healthcare data, enabling users to practice, develop, and showcase their data manipulation and analysis skills in the context of the healthcare industry.
 
 ***
 
 ## Task
-Yaroslav wants to analyze the data to answer some key questions about his business, including time series trends, sales predictions for the next day, week, and month, and customer purchase behaviors. 
+This dataset can be utilized for a wide range of purposes, including:
+
+Developing and testing healthcare predictive models.
+Practicing data cleaning, transformation, and analysis techniques.
+Creating data visualizations to gain insights into healthcare trends.
+Learning and teaching data science and machine learning concepts in a healthcare context.
+You can treat it as a Multi-Class Classification Problem and solve it for Test Results which contains 3 categories(Normal, Abnormal, and Inconclusive).
 
 ***
 
 ## Actions 
-
-### Dashboard
-
-[<img src="https://github.com/lengvangz/images/blob/main/coffee%20sales%20dashboard.png" alt="Image" width="75%" height="75%">](https://public.tableau.com/app/profile/leng.vang/viz/coffeesales_17369660569190/Dashboard1#1)
-
-click on image for the interactive version
 
 ### SQL 
 
